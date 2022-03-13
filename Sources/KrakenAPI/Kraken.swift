@@ -54,23 +54,37 @@ public struct Kraken {
     }
     
     /// Get the server's time.
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getServerTime)
     public func serverTime(completion: @escaping KrakenNetwork.AsyncOperation) {
         request.getRequest(with: "Time", completion: completion)
     }
 
-    // TODO: Test This
     /// Get the current system status or trading mode.
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getSystemStatus)
     public func systemStatus(completion: @escaping KrakenNetwork.AsyncOperation) {
         request.getRequest(with: "SystemStatus", completion: completion)
     }
 
-    
     /// Get information about the assets that are available for deposit, withdrawal, trading and staking.
+	///
+	/// **Query Parameters:**
+	/// - "asset": `String`
+	/// - "aclass": `String`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getAssetInfo)
     public func assets(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.getRequest(with: "Assets", params: options, completion: completion)
     }
     
-    /// Get tradable asset pairs
+    /// Get tradable asset pairs.
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String`
+	/// - "info": `String` (optional)
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTradableAssetPairs)
     public func assetPairs(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.getRequest(with: "AssetPairs", params: options, completion: completion)
     }
@@ -78,16 +92,27 @@ public struct Kraken {
     /// Get Ticker Information.
     /// 
     /// Note: Today's prices start at midnight UTC
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String` (required)
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTickerInformation)
     public func ticker(pairs: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pairs.joined(separator: ",")
         request.getRequest(with: "Ticker", params: optionsCopy, completion: completion)
     }
 
-    // TODO: Test This
     /// Get OHLC Data
     /// 
     /// Note: the last entry in the OHLC array is for the current, not-yet-committed frame and will always be present, regardless of the value of ```since```.
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String` (required)
+	/// - "interval": `Int`
+	/// - "since": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getOHLCData)
     public func ohlcData(pair: String, options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pair
@@ -95,13 +120,27 @@ public struct Kraken {
     }
     
     /// Get Order Book
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String` (required)
+	/// - "count": `Int` [1 .. 500]
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getOrderBook)
     public func orderBook(pairs: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pairs.joined(separator: ",")
         request.getRequest(with: "Depth", params: optionsCopy, completion: completion)
     }
     
-    /// Returns the last 1000 trades by default
+    /// Get Recent Trades
+	///
+	/// Returns the last 1000 trades by default
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String` (required)
+	/// - "since": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getRecentTrades)
     public func trades(pairs: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pairs.joined(separator: ",")
@@ -109,6 +148,12 @@ public struct Kraken {
     }
     
     /// Get Recent Spreads
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String` (required)
+	/// - "since": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getRecentSpreads)
     public func spread(pairs: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pairs.joined(separator: ",")
@@ -118,29 +163,58 @@ public struct Kraken {
     // MARK: Private methods
     
     /// Retrieve all cash balances, net of pending withdrawals.
-    public func accountBalance(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
-        request.postRequest(with: "Balance", params: options, completion: completion)
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getAccountBalance)
+    public func accountBalance(completion: @escaping KrakenNetwork.AsyncOperation) {
+		request.postRequest(with: "Balance", params: [:], completion: completion)
     }
     
     /// Retrieve a summary of collateral balances, margin position valuations, equity and margin level.
+	///
+	/// **Query Parameters:**
+	/// - "asset": `String`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTradeBalance)
     public func tradeBalance(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "TradeBalance", params: options, completion: completion)
     }
     
     /// Retrieve information about currently open orders.
+	///
+	/// **Query Parameters:**
+	/// - "trades": `Bool`
+	/// - "userref": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getOpenOrders)
     public func openOrders(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "OpenOrders", params: options, completion: completion)
     }
 
-    // TODO: Test This
     /// Retrieve information about orders that have been closed (filled or cancelled). 50 results are returned at a time, the most recent by default.
     /// 
     /// Note: If an order's tx ID is given for ```start``` or ```end``` time, the order's opening time (```opentm```) is used
+	///
+	/// **Query Parameters:**
+	/// - "trades": `Bool`
+	/// - "userref": `Int`
+	/// - "start": `Int` (exclusive)
+	/// - "end": `Int` (inclusive)
+	/// - "ofs": `Int`
+	/// - "closetime": `String` ["open", "close", "both"]
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getClosedOrders)
     public func closedOrders(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "ClosedOrders", params: options, completion: completion)
     }
     
     /// Retrieve information about specific orders.
+	///
+	/// **Query Parameters:**
+	/// - "txid": `String` (required)
+	/// - "trades": `Bool`
+	/// - "userref": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getOrdersInfo)
     public func queryOrders(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "QueryOrders", params: options, completion: completion)
     }
@@ -148,11 +222,26 @@ public struct Kraken {
     /// Retrieve information about trades/fills. 50 results are returned at a time, the most recent by default.
     ///
     /// Unless otherwise stated, costs, fees, prices, and volumes are specified with the precision for the asset pair (```pair_decimals``` and ```lot_decimals```), not the individual assets' precision (```decimals```).
+	///
+	/// **Query Parameters:**
+	/// - "type": `String` ["all", "any position", "closed position", "closing position", "no position"]
+	/// - "trades": `Bool`
+	/// - "start": `Int` (exclusive)
+	/// - "end": `Int` (inclusive)
+	/// - "ofs": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTadeHistory)
     public func tradesHistory(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "TradesHistory", params: options, completion: completion)
     }
     
     /// Retrieve information about specific trades/fills.
+	///
+	/// **Query Parameters:**
+	/// - "txid": `String`
+	/// - "trades": `Bool`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTradesInfo)
     public func queryTrades(ids: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["txid"] = ids.joined(separator: ",")
@@ -160,6 +249,13 @@ public struct Kraken {
     }
     
     /// Get information about open margin positions.
+	///
+	/// **Query Parameters:**
+	/// - "txid": `String`
+	/// - "docalcs": `Bool`
+	/// - "consolidation": `String`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getOpenPositions)
     public func openPositions(ids: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["txid"] = ids.joined(separator: ",")
@@ -167,11 +263,27 @@ public struct Kraken {
     }
     
     /// Retrieve information about ledger entries. 50 results are returned at a time, the most recent by default.
+	///
+	/// **Query Parameters:**
+	/// - "asset": `String`
+	/// - "aclass": `String`
+	/// - "type": `String` ["all", "deposit", "withdrawal", "trade", "margin", "rollover", "credit", "transfer", "settled", "staking", "sale"]
+	/// - "start": `Int`
+	/// - "end": `Int`
+	/// - "ofs": `Int`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getLedgers)
     public func ledgersInfo(options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         request.postRequest(with: "Ledgers", params: options, completion: completion)
     }
     
     /// Retrieve information about specific ledger entries.
+	///
+	/// **Query Parameters:**
+	/// - "id": `String`
+	/// - "trades": `Bool`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getLedgersInfo)
     public func queryLedgers(ledgerIds: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["id"] = ledgerIds.joined(separator: ",")
@@ -181,15 +293,25 @@ public struct Kraken {
     /// Get Trade Volume
     ///
     /// Note: If an asset pair is on a maker/taker fee schedule, the taker side is given in ```fees``` and maker side in ```fees_maker```. For pairs not on maker/taker, they will only be given in ```fees```.
+	///
+	/// **Query Parameters:**
+	/// - "pair": `String`
+	/// - "fee-info": `Bool`
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/getTradeVolume
     public func tradeVolume(pairs: [String], options: [String: String]? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy = options ?? [:]
         optionsCopy["pair"] = pairs.joined(separator: ",")
         request.postRequest(with: "TradeVolume", params: optionsCopy, completion: completion)
     }
 
+	// MARK: User Trading
+
     /// Place a new order.
     ///
     /// Note: See the `AssetPairs` endpoint for details on the available trading pairs, their price and quantity precisions, order minimums, available leverage, etc.
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/addOrder)
     public func addOrder(options: [String: String], completion: @escaping KrakenNetwork.AsyncOperation) {
         let valuesNeeded = ["pair", "type", "orderType", "volume"]
         guard options.keys.contains(array: valuesNeeded) else {
@@ -199,14 +321,17 @@ public struct Kraken {
     }
     
     /// Cancel a particular open order (or set of open orders) by ```txid``` or ```userref```
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/cancelOrder)
     public func cancelOrder(ids: [String], completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy: [String: String] = [:]
         optionsCopy["txid"] = ids.joined(separator: ",")
         request.postRequest(with: "CancelOrder", params: optionsCopy, completion: completion)
     }
 
-    // TODO: Test This
     /// Cancel all open orders
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/cancelAllOrders)
     public func cancelAllOrders(completion: @escaping KrakenNetwork.AsyncOperation) {
 		request.postRequest(with: "CancelAll", completion: completion)
     }
@@ -215,7 +340,9 @@ public struct Kraken {
     /// 
     /// CancelAllOrdersAfter provides a "Dead Man's Switch" mechanism to protect the client from network malfunction, extreme latency or unexpected matching engine downtime. The client can send a request with a timeout (in seconds), that will start a countdown timer which will cancel all client orders when the timer expires. The client has to keep sending new requests to push back the trigger time, or deactivate the mechanism by specifying a timeout of 0. If the timer expires, all orders are cancelled and then the timer remains disabled until the client provides a new (non-zero) timeout.
     ///
-    ///The recommended use is to make a call every 15 to 30 seconds, providing a timeout of 60 seconds. This allows the client to keep the orders in place in case of a brief disconnection or transient delay, while keeping them safe in case of a network breakdown. It is also recommended to disable the timer ahead of regularly scheduled trading engine maintenance (if the timer is enabled, all orders will be cancelled when the trading engine comes back from downtime - planned or otherwise).   
+    ///The recommended use is to make a call every 15 to 30 seconds, providing a timeout of 60 seconds. This allows the client to keep the orders in place in case of a brief disconnection or transient delay, while keeping them safe in case of a network breakdown. It is also recommended to disable the timer ahead of regularly scheduled trading engine maintenance (if the timer is enabled, all orders will be cancelled when the trading engine comes back from downtime - planned or otherwise).
+	///
+	/// [API Reference](https://docs.kraken.com/rest/#operation/cancelAllOrdersAfter)
     public func cancelAllAfter(timeout: Int, completion: @escaping KrakenNetwork.AsyncOperation) {
         var optionsCopy: [String: String] = [:]
         optionsCopy["timeout"] = "\(timeout)"
