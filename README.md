@@ -18,3 +18,43 @@ Kraken Swift was built by [Antonio Casero](@acaserop)
 ## Installation
 
 ### Swift Package Manager
+To use in your project simply add this to your ```Package.swift``` under ```dependencies```.
+
+```swift
+.package(url: "https://github.com/lukepistrol/KrakenAPI.git", .upToNextMajor(from: "1.0.0"))
+```
+When using Xcode go to ```File > Add Packages``` and add the following URL: 
+```
+https://github.com/lukepistrol/KrakenAPI.git
+```
+
+## Usage
+
+Create a Kraken client using your credentials
+
+```swift
+import KrakenAPI
+
+let credentials = Kraken.Credentials(apiKey: "YOUR-API-KEY", 
+                                     privateKey: "YOUR-PRIVATE-KEY")
+
+let kraken = Kraken(credentials: credentials)
+```
+
+### Server Time
+
+Get the server time from the Kraken API server.
+
+```swift
+kraken.serverTime { result in 
+    switch result {
+        case .success(let serverTime):
+            print(serverTime["unixtime"]) // 1393056191
+            print(serverTime["rfc1123"]) // "Sun, 13 Mar 2022 08:28:04 GMT"
+        case .failure(let error):
+            print(error) 
+    }
+}
+```
+
+See more documentation [here](https://docs.kraken.com/rest/) and in code documentation.
