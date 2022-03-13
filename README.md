@@ -1,7 +1,16 @@
+<p>
+    <img src="https://img.shields.io/badge/version-1.0.0-green" />
+    <img src="https://img.shields.io/badge/Swift-5.5.3-ff69b4.svg" />
+    <img src="https://img.shields.io/badge/iOS-12+-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/macOS-10.12+-brightgreen.svg" />
+    <a href="https://twitter.com/lukeeep_">
+        <img src="https://img.shields.io/badge/Contact-@lukeeep_-lightgrey.svg?style=flat" alt="Twitter: @lukeeep_" />
+    </a>
+</p>
 # KrakenAPI
 
 ### IMPORTANT
-This Library is heavily inspired by Antonio Casero. The original repo can be found [here](https://github.com/antoniocasero/Kraken)
+This Library is heavily inspired by [Antonio Casero](@acaserop). The original repo can be found [here](https://github.com/antoniocasero/Kraken)
 
 Please thoroughly vet everything in the code for yourself before using this lib to buy, sell, or move any of your assets.
 
