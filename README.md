@@ -10,7 +10,7 @@
 # KrakenAPI
 
 ### IMPORTANT
-This Library is heavily inspired by [Antonio Casero](@acaserop). The original repo can be found [here](https://github.com/antoniocasero/Kraken)
+This Library is heavily inspired by [Antonio Casero](@acaserop). The original repo can be found [here](https://github.com/antoniocasero/Kraken). I added missing endpoints, async/await support and documentation.
 
 Please thoroughly vet everything in the code for yourself before using this lib to buy, sell, or move any of your assets.
 
