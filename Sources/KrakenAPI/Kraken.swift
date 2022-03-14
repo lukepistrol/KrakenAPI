@@ -14,19 +14,19 @@ import Foundation
     [See Reference here](https://docs.kraken.com/rest/)
 
     Requests:
-    Request payloads are form-encoded (```Content-Type: application/x-www-form-urlencoded```), and all requests must specify a ```User-Agent``` in their headers.
+    Request payloads are form-encoded (`Content-Type: application/x-www-form-urlencoded`), and all requests must specify a `User-Agent` in their headers.
 
     Responses:
-    Responses are JSON encoded and contain one or two top-level keys (```result``` and ```error``` for successful requests or those with warnings, or only error for failed or rejected requests)
+    Responses are JSON encoded and contain one or two top-level keys (`result` and `error` for successful requests or those with warnings, or only error for failed or rejected requests)
 
     Error Details:
     HTTP status codes are generally not used by our API to convey information about the state of requests -- any errors or warnings are denoted in the error field of the response as described above. Status codes other than 200 indicate that there was an issue with the request reaching our servers.
 
-    ```error``` messages follow the general format ```<severity><category>:<error msg>```[```:add'l text```]
+    `error` messages follow the general format `<severity><category>:<error msg>`[`:add'l text`]
 
-    - ```severity``` can be either ```E``` for error or ```W``` for warning
-    - ```category``` can be one of ```General```, ```Auth```, ```API```, ```Query```, ```Order```, ```Trade```, ```Funding```, or ```Service```
-    - ```error msg``` can be any text string that describes the reason for the error
+    - `severity` can be either `E` for error or `W` for warning
+    - `category` can be one of `General`, `Auth`, `API`, `Query`, `Order`, `Trade`, `Funding`, or `Service`
+    - `error msg` can be any text string that describes the reason for the error
 */
 public struct Kraken {
 

@@ -223,7 +223,7 @@ public struct KrakenNetwork {
         return Data(signature).base64EncodedString()
     }
 
-	/// Takes the parameters and adds a ```nonce``` parameter to the Dictionary
+	/// Takes the parameters and adds a `nonce` parameter to the Dictionary
 	/// - Parameter params: The parameters
 	/// - Returns: A Dictionary of parameters
     private func addNonce(to params: [String : String]?) -> [String: String] {
