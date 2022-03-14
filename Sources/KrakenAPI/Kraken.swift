@@ -8,7 +8,7 @@
 
 import Foundation
 
-/***
+/**
     Kraken REST API
 
     [See Reference here](https://docs.kraken.com/rest/)
@@ -167,7 +167,7 @@ public struct Kraken {
 
     /// Get OHLC Data
     /// 
-    /// Note: the last entry in the OHLC array is for the current, not-yet-committed frame and will always be present, regardless of the value of ```since```.
+    /// Note: the last entry in the OHLC array is for the current, not-yet-committed frame and will always be present, regardless of the value of `since`.
 	///
 	/// **Query Parameters:**
 	/// - "pair": `String` (required)
@@ -183,7 +183,7 @@ public struct Kraken {
 
 	/// Get OHLC Data
 	///
-	/// Note: the last entry in the OHLC array is for the current, not-yet-committed frame and will always be present, regardless of the value of ```since```.
+	/// Note: the last entry in the OHLC array is for the current, not-yet-committed frame and will always be present, regardless of the value of `since`.
 	///
 	/// **Query Parameters:**
 	/// - "pair": `String` (required)
@@ -353,7 +353,7 @@ public struct Kraken {
 
     /// Retrieve information about orders that have been closed (filled or cancelled). 50 results are returned at a time, the most recent by default.
     /// 
-    /// Note: If an order's tx ID is given for ```start``` or ```end``` time, the order's opening time (```opentm```) is used
+    /// Note: If an order's tx ID is given for `start` or `end` time, the order's opening time (`opentm`) is used
 	///
 	/// **Query Parameters:**
 	/// - "trades": `Bool`
@@ -370,7 +370,7 @@ public struct Kraken {
 
 	/// Retrieve information about orders that have been closed (filled or cancelled). 50 results are returned at a time, the most recent by default.
 	///
-	/// Note: If an order's tx ID is given for ```start``` or ```end``` time, the order's opening time (```opentm```) is used
+	/// Note: If an order's tx ID is given for `start` or `end` time, the order's opening time (`opentm`) is used
 	///
 	/// **Query Parameters:**
 	/// - "trades": `Bool`
@@ -415,7 +415,7 @@ public struct Kraken {
     
     /// Retrieve information about trades/fills. 50 results are returned at a time, the most recent by default.
     ///
-    /// Unless otherwise stated, costs, fees, prices, and volumes are specified with the precision for the asset pair (```pair_decimals``` and ```lot_decimals```), not the individual assets' precision (```decimals```).
+    /// Unless otherwise stated, costs, fees, prices, and volumes are specified with the precision for the asset pair (`pair_decimals` and `lot_decimals`), not the individual assets' precision (`decimals`).
 	///
 	/// **Query Parameters:**
 	/// - "type": `String` ["all", "any position", "closed position", "closing position", "no position"]
@@ -431,7 +431,7 @@ public struct Kraken {
 
 	/// Retrieve information about trades/fills. 50 results are returned at a time, the most recent by default.
 	///
-	/// Unless otherwise stated, costs, fees, prices, and volumes are specified with the precision for the asset pair (```pair_decimals``` and ```lot_decimals```), not the individual assets' precision (```decimals```).
+	/// Unless otherwise stated, costs, fees, prices, and volumes are specified with the precision for the asset pair (`pair_decimals` and `lot_decimals`), not the individual assets' precision (`decimals`).
 	///
 	/// **Query Parameters:**
 	/// - "type": `String` ["all", "any position", "closed position", "closing position", "no position"]
@@ -567,7 +567,7 @@ public struct Kraken {
     
     /// Get Trade Volume
     ///
-    /// Note: If an asset pair is on a maker/taker fee schedule, the taker side is given in ```fees``` and maker side in ```fees_maker```. For pairs not on maker/taker, they will only be given in ```fees```.
+    /// Note: If an asset pair is on a maker/taker fee schedule, the taker side is given in `fees` and maker side in `fees_maker`. For pairs not on maker/taker, they will only be given in `fees`.
 	///
 	/// **Query Parameters:**
 	/// - "pair": `String`
@@ -582,7 +582,7 @@ public struct Kraken {
 
 	/// Get Trade Volume
 	///
-	/// Note: If an asset pair is on a maker/taker fee schedule, the taker side is given in ```fees``` and maker side in ```fees_maker```. For pairs not on maker/taker, they will only be given in ```fees```.
+	/// Note: If an asset pair is on a maker/taker fee schedule, the taker side is given in `fees` and maker side in `fees_maker`. For pairs not on maker/taker, they will only be given in `fees`.
 	///
 	/// **Query Parameters:**
 	/// - "pair": `String`
@@ -627,7 +627,7 @@ public struct Kraken {
 
 	// MARK: Cancel Order
 
-    /// Cancel a particular open order (or set of open orders) by ```txid``` or ```userref```
+    /// Cancel a particular open order (or set of open orders) by `txid` or `userref`
 	///
 	/// [API Reference](https://docs.kraken.com/rest/#operation/cancelOrder)
     public func cancelOrder(ids: [String], completion: @escaping KrakenNetwork.AsyncOperation) {
@@ -636,7 +636,7 @@ public struct Kraken {
         request.postRequest(with: "CancelOrder", params: optionsCopy, completion: completion)
     }
 
-	/// Cancel a particular open order (or set of open orders) by ```txid``` or ```userref```
+	/// Cancel a particular open order (or set of open orders) by `txid` or `userref`
 	///
 	/// [API Reference](https://docs.kraken.com/rest/#operation/cancelOrder)
 	public func cancelOrder(ids: [String]) async -> KrakenNetwork.AsyncResult {
