@@ -44,7 +44,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testTicker() async throws {
-		let result = await kraken.ticker(pairs: ["XBTEUR"])
+		let result = await kraken.ticker(pair: "XBTUSD")
 
 		switch result {
 		case .success(let result): XCTAssert(true, result.description)
@@ -62,7 +62,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testOrderBook() async throws {
-		let result = await kraken.orderBook(pairs: ["XBTEUR"])
+		let result = await kraken.orderBook(pair: "XBTEUR")
 
 		switch result {
 		case .success(let result): XCTAssert(true, result.description)
@@ -71,7 +71,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testTrades() async throws {
-		let result = await kraken.trades(pairs: ["XBTEUR"])
+		let result = await kraken.trades(pair: "XBTEUR")
 
 		switch result {
 		case .success(let result): XCTAssert(true, result.description)
@@ -80,7 +80,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testSpread() async throws {
-		let result = await kraken.spread(pairs: ["XBTEUR"])
+		let result = await kraken.spread(pair: "XBTEUR")
 
 		switch result {
 		case .success(let result): XCTAssert(true, result.description)
@@ -125,7 +125,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testQueryOrders() async throws {
-		let result = await kraken.queryOrders()
+		let result = await kraken.queryOrders(txids: [""])
 
 		switch result {
 		case .success(let result): XCTAssert(false, result.description)
@@ -143,7 +143,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testQueryTrades() async throws {
-		let result = await kraken.queryTrades(ids: [""])
+		let result = await kraken.queryTrades()
 
 		switch result {
 		case .success(let result): XCTAssert(false, result.description)
@@ -152,7 +152,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testOpenPositions() async throws {
-		let result = await kraken.openPositions(ids: [""])
+		let result = await kraken.openPositions()
 
 		switch result {
 		case .success(let result): XCTAssert(false, result.description)
@@ -170,7 +170,7 @@ final class KrakenAPITests: XCTestCase {
 	}
 
 	func testQueryLedgers() async throws {
-		let result = await kraken.queryLedgers(ledgerIds: [""])
+		let result = await kraken.queryLedgers()
 
 		switch result {
 		case .success(let result): XCTAssert(false, result.description)
