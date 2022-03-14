@@ -66,4 +66,18 @@ kraken.serverTime { result in
 }
 ```
 
+Or using async await:
+
+```swift
+let result = await kraken.serverTime()
+
+switch result {
+	case .success(let serverTime):
+		print(serverTime["unixtime"]) // 1393056191
+		print(serverTime["rfc1123"]) // "Sun, 13 Mar 2022 08:28:04 GMT"
+	case .failure(let error):
+		print(error) 
+}
+```
+
 See more documentation [here](https://docs.kraken.com/rest/) and in code documentation.
