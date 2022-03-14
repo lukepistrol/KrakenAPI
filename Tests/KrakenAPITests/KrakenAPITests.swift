@@ -4,8 +4,7 @@ import XCTest
 final class KrakenAPITests: XCTestCase {
 
 	var kraken: Kraken = Kraken(
-		credentials: Kraken.Credentials(apiKey: ENV.API_KEY,
-										privateKey: ENV.PRIVATE_KEY)
+		credentials: Kraken.Credentials(apiKey: ENV.API_KEY, privateKey: ENV.PRIVATE_KEY)
 	)
 
 	func testServerTime() async throws {
