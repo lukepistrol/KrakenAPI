@@ -12,7 +12,7 @@ import CryptoSwift
 public struct KrakenNetwork {
 
 	/// The type of the request [public | private]
-    enum RequestType: String {
+    public enum RequestType: String {
 		/// points to http://api.kraken.com/0/public/
         case publicRequest = "public"
 
@@ -21,7 +21,10 @@ public struct KrakenNetwork {
     }
 
 	/// Result Type: KrakenResult<[String: Any]>
-    public typealias AsyncOperation = (KrakenResult<[String : Any]>) -> Void
+    public typealias AsyncOperation = (KrakenResult<[String: Any]>) -> Void
+
+	/// Result Type: KrakenResult<[String: Any]>
+	public typealias AsyncResult = KrakenResult<[String: Any]>
 
 	/// Kraken Credentials for API calls
     private let credentials: Kraken.Credentials
@@ -82,7 +85,7 @@ public struct KrakenNetwork {
 	///   - params: The parameters for the API endpoint
 	///   - type: The type of the endpoint [public | private]
 	///   - completion: completion handler callback
-    func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest,
+	internal func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest,
                     completion: @escaping AsyncOperation) {
         let params = params ?? [:]
         guard let url = createURL(with: method, params:params, type: type) else {
@@ -92,7 +95,22 @@ public struct KrakenNetwork {
         let request = URLRequest(url: url)
         
         rawRequest(request, completion: completion)
-    }
+	}
+
+	/// Initiates a GET Request on the Kraken REST API
+	/// - Parameters:
+	///   - method: The desired Kraken API endpoint
+	///   - params: The parameters for the API endpoint
+	///   - type: The type of the endpoint [public | private]
+	/// - Returns: KrakenResult<[String: Any]>
+	internal func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest) async -> AsyncResult {
+		return await withCheckedContinuation { continuation in
+			getRequest(with: method, params: params, type: type) { result in
+				continuation.resume(returning: result)
+			}
+		}
+	}
+	
 
 	/// Initiates a POST Request on the Kraken REST API
 	/// - Parameters:
@@ -100,7 +118,7 @@ public struct KrakenNetwork {
 	///   - params: The parameters for the API endpoint
 	///   - type: The type of the endpoint [public | private]
 	///   - completion: completion handler callback
-    func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest,
+	internal func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest,
                      completion: @escaping AsyncOperation) {
         
         let params = addNonce(to:params)
@@ -120,13 +138,28 @@ public struct KrakenNetwork {
             request.setValue(value, forHTTPHeaderField: key)
         }
         rawRequest(request, completion: completion)
-    }
+	}
+
+	/// Initiates a POST Request on the Kraken REST API
+	/// - Parameters:
+	///   - path: The desired Kraken API endpoint
+	///   - params: The parameters for the API endpoint
+	///   - type: The type of the endpoint [public | private]
+	/// - Returns: KrakenResult<[String: Any]>
+	internal func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest) async -> AsyncResult {
+		return await withCheckedContinuation { continuation in
+			postRequest(with: path, params: params, type: type) { result in
+				continuation.resume(returning: result)
+			}
+		}
+	}
+
 
 	/// Calls the Kraken API
 	/// - Parameters:
 	///   - request: The URLRequest
 	///   - completion: completion handler callback
-    private func rawRequest(_ request: URLRequest, completion: @escaping AsyncOperation) {
+	private func rawRequest(_ request: URLRequest, completion: @escaping AsyncOperation) {
         let session = URLSession.shared
         let task = session.dataTask(with: request) { (data, response, error) in
             guard let data = data, let _ = response else {
@@ -152,7 +185,20 @@ public struct KrakenNetwork {
             
             }
         task.resume()
-    }
+	}
+
+	/// Calls the Kraken API
+	/// - Parameters:
+	///   - request: The URLRequest
+	/// - Returns: KrakenResult<[String: Any]>
+	private func rawRequest(_ request: URLRequest) async -> AsyncResult {
+		return await withCheckedContinuation { continuation in
+			rawRequest(request) { result in
+				continuation.resume(returning: result)
+			}
+		}
+	}
+
 
 	/// Generates a signature for the Kraken REST API call
 	/// - Parameters:
@@ -182,7 +228,7 @@ public struct KrakenNetwork {
 	/// - Returns: A Dictionary of parameters
     private func addNonce(to params: [String : String]?) -> [String: String] {
         var paramsWithNonce = params ?? [:]
-        let nonce = String(Int(Date().timeIntervalSinceReferenceDate.rounded()*1000))
+        let nonce = String(Int(Date().timeIntervalSinceReferenceDate*1000))
         paramsWithNonce["nonce"] = nonce
         return paramsWithNonce
         
