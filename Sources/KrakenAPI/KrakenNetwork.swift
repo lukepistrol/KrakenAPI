@@ -20,7 +20,7 @@ public struct KrakenNetwork {
         case privateRequest = "private"
     }
 
-	/// Result Type: KrakenResult<[String: Any]>
+	/// Result Type: ``KrakenResult``
     public typealias AsyncOperation = (KrakenResult<[String: Any]>) -> Void
 
 	/// Result Type: KrakenResult<[String: Any]>
