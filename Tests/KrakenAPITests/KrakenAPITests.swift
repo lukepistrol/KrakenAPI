@@ -174,7 +174,7 @@ final class KrakenAPITests: XCTestCase {
 
 		switch result {
 		case .success(let result): XCTAssert(false, result.description)
-		case .failure(let error): XCTAssert(true, error.localizedDescription)
+		case .failure(let error): XCTAssert(true, error.description)
 		}
 	}
 

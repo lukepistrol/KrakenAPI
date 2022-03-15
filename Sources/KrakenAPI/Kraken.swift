@@ -13,13 +13,13 @@ import Foundation
 
     [See Reference here](https://docs.kraken.com/rest/)
 
-    Requests:
+    ### Requests:
     Request payloads are form-encoded (`Content-Type: application/x-www-form-urlencoded`), and all requests must specify a `User-Agent` in their headers.
 
-    Responses:
+    ### Responses:
     Responses are JSON encoded and contain one or two top-level keys (`result` and `error` for successful requests or those with warnings, or only error for failed or rejected requests)
 
-    Error Details:
+    ### Error Details:
     HTTP status codes are generally not used by our API to convey information about the state of requests -- any errors or warnings are denoted in the error field of the response as described above. Status codes other than 200 indicate that there was an issue with the request reaching our servers.
 
     `error` messages follow the general format `<severity><category>:<error msg>`[`:add'l text`]
@@ -61,14 +61,14 @@ public struct Kraken {
     /// Get the server's time.
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getServerTime)
-    public func serverTime(completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func serverTime(completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
         request.getRequest(with: "Time", completion: completion)
     }
 
 	/// Get the server's time.
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getServerTime)
-	public func serverTime() async -> KrakenNetwork.AsyncResult {
+	public func serverTime() async -> KrakenNetwork.KrakenResult {
 		await request.getRequest(with: "Time")
 	}
 
@@ -77,14 +77,14 @@ public struct Kraken {
     /// Get the current system status or trading mode.
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getSystemStatus)
-    public func systemStatus(completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func systemStatus(completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
         request.getRequest(with: "SystemStatus", completion: completion)
     }
 
 	/// Get the current system status or trading mode.
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getSystemStatus)
-	public func systemStatus() async -> KrakenNetwork.AsyncResult {
+	public func systemStatus() async -> KrakenNetwork.KrakenResult {
 		await request.getRequest(with: "SystemStatus")
 	}
 
@@ -98,7 +98,7 @@ public struct Kraken {
 	///   - assets: List of assets to get info on (Example: "XBT, "ETH")
 	///   - aclass: Asset class (optional, Default: "currency")
 	///
-    public func assets(assets: [String]? = nil, aclass: String = "currency", completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func assets(assets: [String]? = nil, aclass: String = "currency", completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		if let assets = assets {
 			options["asset"] = assets.joined(separator: ",")
@@ -115,7 +115,7 @@ public struct Kraken {
 	///   - assets: List of assets to get info on (Example: "XBT, "ETH")
 	///   - aclass: Asset class (optional, Default: "currency")
 	///
-	public func assets(assets: [String]? = nil, aclass: String = "currency") async -> KrakenNetwork.AsyncResult {
+	public func assets(assets: [String]? = nil, aclass: String = "currency") async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		if let assets = assets {
 			options["asset"] = assets.joined(separator: ",")
@@ -134,7 +134,7 @@ public struct Kraken {
 	///   - pairs: Asset pairs to get data for (Example: "XBTUSD","XETHXXBT")
 	///   - info: Info to retreive (Default: "info") ["info", "leverage", "fees", "margin"]
 	///
-	public func assetPairs(pairs: [String]? = nil, info: AssetPairInfo = .info, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func assetPairs(pairs: [String]? = nil, info: AssetPairInfo = .info, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		if let pairs = pairs {
 			options["pair"] = pairs.joined(separator: ",")
@@ -151,7 +151,7 @@ public struct Kraken {
 	///   - pairs: Asset pairs to get data for (Example: "XBTUSD","XETHXXBT")
 	///   - info: Info to retreive (Default: "info") ["info", "leverage", "fees", "margin"]
 	///
-	public func assetPairs(pairs: [String]? = nil, info: AssetPairInfo = .info) async -> KrakenNetwork.AsyncResult {
+	public func assetPairs(pairs: [String]? = nil, info: AssetPairInfo = .info) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		if let pairs = pairs {
 			options["pair"] = pairs.joined(separator: ",")
@@ -170,7 +170,7 @@ public struct Kraken {
 	///
 	/// - Parameter pair: Asset pair to get data for (Example: "XBTUSD")
 	///
-    public func ticker(pair: String, completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func ticker(pair: String, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["pair"] = pair
         request.getRequest(with: "Ticker", params: options, completion: completion)
@@ -184,7 +184,7 @@ public struct Kraken {
 	///
 	/// - Parameter pair: Asset pair to get data for (Example: "XBTUSD")
 	///
-	public func ticker(pair: String) async -> KrakenNetwork.AsyncResult {
+	public func ticker(pair: String) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		return await request.getRequest(with: "Ticker", params: options)
@@ -203,7 +203,7 @@ public struct Kraken {
 	///   - interval: Time frame interval in minutes (Only [1, 5, 15, 30, 60, 240, 1440, 10080, 21600] allowed)
 	///   - since: Return ommitted OHLC data since given ID (Example: 1548111600)
 	///
-	public func ohlcData(pair: String, interval: OHLCInterval = .i1min, since: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func ohlcData(pair: String, interval: OHLCInterval = .i1min, since: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		options["interval"] = interval.rawValue
@@ -224,7 +224,7 @@ public struct Kraken {
 	///   - interval: Time frame interval in minutes (Only [1, 4, 15, 30, 60, 240, 1440, 10080, 21600] allowed)
 	///   - since: Return ommitted OHLC data since given ID (Example: 1548111600)
 	///
-	public func ohlcData(pair: String, interval: OHLCInterval = .i1min, since: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func ohlcData(pair: String, interval: OHLCInterval = .i1min, since: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		options["interval"] = interval.rawValue
@@ -244,7 +244,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - count: maximum number of asks/bids (Default: 100)
 	///
-	public func orderBook(pair: String, count: Int = 100, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func orderBook(pair: String, count: Int = 100, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
         options["pair"] = pair
 		options["count"] = "\(count)"
@@ -259,7 +259,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - count: maximum number of asks/bids (Default: 100)
 	///
-	public func orderBook(pair: String, count: Int = 100) async -> KrakenNetwork.AsyncResult {
+	public func orderBook(pair: String, count: Int = 100) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		options["count"] = "\(count)"
@@ -278,7 +278,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - since: Unix timestamp as `Int` (Example: 1616663618)
 	///
-    public func trades(pair: String, since: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func trades(pair: String, since: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		if let since = since {
@@ -297,7 +297,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - since: Unix timestamp as `Int` (Example: 1616663618)
 	///
-	public func trades(pair: String, since: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func trades(pair: String, since: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		if let since = since {
@@ -316,7 +316,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - since: Unix timestamp as `Int` (Example: 1616663618)
 	///
-	public func spread(pair: String, since: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func spread(pair: String, since: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		if let since = since {
@@ -333,7 +333,7 @@ public struct Kraken {
 	///   - pair: Asset pair to get data for (Example: "XBTUSD")
 	///   - since: Unix timestamp as `Int` (Example: 1616663618)
 	///
-	public func spread(pair: String, since: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func spread(pair: String, since: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pair
 		if let since = since {
@@ -350,7 +350,7 @@ public struct Kraken {
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getAccountBalance)
 	///
-    public func accountBalance(completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func accountBalance(completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		request.postRequest(with: "Balance", completion: completion)
     }
 
@@ -358,7 +358,7 @@ public struct Kraken {
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getAccountBalance)
 	///
-	public func accountBalance() async -> KrakenNetwork.AsyncResult {
+	public func accountBalance() async -> KrakenNetwork.KrakenResult {
 		await request.postRequest(with: "Balance")
 	}
 
@@ -371,7 +371,7 @@ public struct Kraken {
 	/// - Parameters:
 	///   - asset: Base asset used to determine balance (Default: "ZUSD")
 	///
-    public func tradeBalance(asset: String = "ZUSD", completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func tradeBalance(asset: String = "ZUSD", completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["asset"] = asset
         request.postRequest(with: "TradeBalance", params: options, completion: completion)
@@ -384,7 +384,7 @@ public struct Kraken {
 	/// - Parameters:
 	///   - asset: Base asset used to determine balance (Default: "ZUSD")
 	///
-	public func tradeBalance(asset: String = "ZUSD") async -> KrakenNetwork.AsyncResult {
+	public func tradeBalance(asset: String = "ZUSD") async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["asset"] = asset
 		return await request.postRequest(with: "TradeBalance", params: options)
@@ -400,7 +400,7 @@ public struct Kraken {
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///   - userref: Restrict results to given user reference id
 	///
-	public func openOrders(trades: Bool = false, userref: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func openOrders(trades: Bool = false, userref: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["trades"] = "\(trades)"
 		if let userref = userref {
@@ -417,7 +417,7 @@ public struct Kraken {
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///   - userref: Restrict results to given user reference id
 	///
-	public func openOrders(trades: Bool = false, userref: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func openOrders(trades: Bool = false, userref: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["trades"] = "\(trades)"
 		if let userref = userref {
@@ -442,7 +442,7 @@ public struct Kraken {
 	///   - ofs: Result offset for pagination
 	///   - closetime: Which time to use to search (Default: "both") ["both", "open", "close"]
 	///
-	public func closedOrders(trades: Bool = false, userref: Int? = nil, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, closetime: ClosedOrdersTime = .both, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func closedOrders(trades: Bool = false, userref: Int? = nil, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, closetime: ClosedOrdersTime = .both, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["trades"] = "\(trades)"
 		if let userref = userref {
@@ -475,7 +475,7 @@ public struct Kraken {
 	///   - ofs: Result offset for pagination
 	///   - closetime: Which time to use to search (Default: "both") ["both", "open", "close"]
 	///
-	public func closedOrders(trades: Bool = false, userref: Int? = nil, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, closetime: ClosedOrdersTime = .both) async -> KrakenNetwork.AsyncResult {
+	public func closedOrders(trades: Bool = false, userref: Int? = nil, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, closetime: ClosedOrdersTime = .both) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["trades"] = "\(trades)"
 		if let userref = userref {
@@ -501,11 +501,11 @@ public struct Kraken {
 	///  [See API Reference](https://docs.kraken.com/rest/#operation/getOrdersInfo)
 	///
 	/// - Parameters:
-	///   - txid: List of transaction IDs to query info about (50 maximum)
+	///   - txids: List of transaction IDs to query info about (50 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///   - userref: Restrict results to given user reference id
 	///
-	public func queryOrders(txids: [String], trades: Bool = false, userref: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func queryOrders(txids: [String], trades: Bool = false, userref: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["txid"] = txids.joined(separator: ",")
 		options["trades"] = "\(trades)"
@@ -520,11 +520,11 @@ public struct Kraken {
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/getOrdersInfo)
 	///
 	/// - Parameters:
-	///   - txid: List of transaction IDs to query info about (50 maximum)
+	///   - txids: List of transaction IDs to query info about (50 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///   - userref: Restrict results to given user reference id
 	///
-	public func queryOrders(txids: [String], trades: Bool = false, userref: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func queryOrders(txids: [String], trades: Bool = false, userref: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["txid"] = txids.joined(separator: ",")
 		options["trades"] = "\(trades)"
@@ -549,7 +549,7 @@ public struct Kraken {
 	///   - end: Ending unix timestamp or order tx ID of results (inclusive)
 	///   - ofs: Result offset for pagination
 	///
-	public func tradesHistory(type: TradesHistoryType = .all, trades: Bool = false, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func tradesHistory(type: TradesHistoryType = .all, trades: Bool = false, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["type"] = type.rawValue
 		options["trades"] = "\(trades)"
@@ -578,7 +578,7 @@ public struct Kraken {
 	///   - end: Ending unix timestamp or order tx ID of results (inclusive)
 	///   - ofs: Result offset for pagination
 	///
-	public func tradesHistory(type: TradesHistoryType = .all, trades: Bool = false, start: Int? = nil, end: Int? = nil, ofs: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func tradesHistory(type: TradesHistoryType = .all, trades: Bool = false, start: Int? = nil, end: Int? = nil, ofs: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["type"] = type.rawValue
 		options["trades"] = "\(trades)"
@@ -604,7 +604,7 @@ public struct Kraken {
 	///   - txids: List of transaction IDs to query info about (20 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///
-    public func queryTrades(txids: [String]? = nil, trades: Bool = false, completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func queryTrades(txids: [String]? = nil, trades: Bool = false, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		if let txids = txids {
 			options["txid"] = txids.joined(separator: ",")
@@ -621,7 +621,7 @@ public struct Kraken {
 	///   - txids: List of transaction IDs to query info about (20 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///
-	public func queryTrades(txids: [String]? = nil, trades: Bool = false) async -> KrakenNetwork.AsyncResult {
+	public func queryTrades(txids: [String]? = nil, trades: Bool = false) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		if let txids = txids {
 			options["txid"] = txids.joined(separator: ",")
@@ -641,7 +641,7 @@ public struct Kraken {
 	///   - docalcs: Whether to include P&L calculations (Default: false)
 	///   - consolidation: Consolidate positions by market/pair (Default: "market")
 	///
-	public func openPositions(txids: [String]? = nil, docalcs: Bool = false, consolidation: OpenPositionConsolidation = .market, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func openPositions(txids: [String]? = nil, docalcs: Bool = false, consolidation: OpenPositionConsolidation = .market, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		if let txids = txids {
 			options["txid"] = txids.joined(separator: ",")
@@ -660,7 +660,7 @@ public struct Kraken {
 	///   - docalcs: Whether to include P&L calculations (Default: false)
 	///   - consolidation: Consolidate positions by market/pair (Default: "market")
 	///
-	public func openPositions(txids: [String]? = nil, docalcs: Bool = false, consolidation: OpenPositionConsolidation = .market) async -> KrakenNetwork.AsyncResult {
+	public func openPositions(txids: [String]? = nil, docalcs: Bool = false, consolidation: OpenPositionConsolidation = .market) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		if let txids = txids {
 			options["txid"] = txids.joined(separator: ",")
@@ -684,7 +684,7 @@ public struct Kraken {
 	///   - end: Ending unix timestamp or ledger ID of results (inclusive)
 	///   - ofs: Result offset for pagination
 	///
-	public func ledgersInfo(asset: [String] = ["all"], aclass: String = "currency", type: LedgerType = .all, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func ledgersInfo(asset: [String] = ["all"], aclass: String = "currency", type: LedgerType = .all, start: Int? = nil, end: Int? = nil, ofs: Int? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["asset"] = asset.joined(separator: ",")
 		options["aclass"] = aclass
@@ -713,7 +713,7 @@ public struct Kraken {
 	///   - end: Ending unix timestamp or ledger ID of results (inclusive)
 	///   - ofs: Result offset for pagination
 	///
-	public func ledgersInfo(asset: [String] = ["all"], aclass: String = "currency", type: LedgerType = .all, start: Int? = nil, end: Int? = nil, ofs: Int? = nil) async -> KrakenNetwork.AsyncResult {
+	public func ledgersInfo(asset: [String] = ["all"], aclass: String = "currency", type: LedgerType = .all, start: Int? = nil, end: Int? = nil, ofs: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["asset"] = asset.joined(separator: ",")
 		options["aclass"] = aclass
@@ -740,7 +740,7 @@ public struct Kraken {
 	///   - ids: List of ledger IDs to query info about (20 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///
-    public func queryLedgers(ids: [String]? = nil, trades: Bool = false, completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func queryLedgers(ids: [String]? = nil, trades: Bool = false, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		if let ids = ids {
 			options["id"] = ids.joined(separator: ",")
@@ -757,7 +757,7 @@ public struct Kraken {
 	///   - ids: List of ledger IDs to query info about (20 maximum)
 	///   - trades: Whether or not to include trades related to position in output (Default: false)
 	///
-	public func queryLedgers(ids: [String]? = nil, trades: Bool = false) async -> KrakenNetwork.AsyncResult {
+	public func queryLedgers(ids: [String]? = nil, trades: Bool = false) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		if let ids = ids {
 			options["id"] = ids.joined(separator: ",")
@@ -778,7 +778,7 @@ public struct Kraken {
 	///   - pairs: Asset pairs to get data for (Example: "XBTUSD")
 	///   - feeInfo: Whether or not to include fee info in results (optional)
 	///
-	public func tradeVolume(pairs: [String], feeInfo: Bool? = nil, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func tradeVolume(pairs: [String], feeInfo: Bool? = nil, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["pair"] = pairs.joined(separator: ",")
 		if let feeInfo = feeInfo {
@@ -797,7 +797,7 @@ public struct Kraken {
 	///   - pairs: Asset pairs to get data for (Example: "XBTUSD")
 	///   - feeInfo: Whether or not to include fee info in results (optional)
 	///
-	public func tradeVolume(pairs: [String], feeInfo: Bool? = nil) async -> KrakenNetwork.AsyncResult {
+	public func tradeVolume(pairs: [String], feeInfo: Bool? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["pair"] = pairs.joined(separator: ",")
 		if let feeInfo = feeInfo {
@@ -854,7 +854,7 @@ public struct Kraken {
 						 deadline: String? = nil,
 						 validate: Bool = false,
 						 userref: Int? = nil,
-						 completion: @escaping KrakenNetwork.AsyncOperation) {
+						 completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
 		options["ordertype"] = orderType.rawValue
 		options["type"] = direction.rawValue
@@ -940,7 +940,7 @@ public struct Kraken {
 						 closePrice2: String? = nil,
 						 deadline: String? = nil,
 						 validate: Bool = false,
-						 userref: Int? = nil) async -> KrakenNetwork.AsyncResult {
+						 userref: Int? = nil) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["ordertype"] = orderType.rawValue
 		options["type"] = direction.rawValue
@@ -991,7 +991,7 @@ public struct Kraken {
 	///
 	/// - Parameter txid: Open order transaction ID (txid) or user reference (userref)
 	///
-	public func cancelOrder(txid: String, completion: @escaping KrakenNetwork.AsyncOperation) {
+	public func cancelOrder(txid: String, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		var options: [String: String] = [:]
         options["txid"] = txid
         request.postRequest(with: "CancelOrder", params: options, completion: completion)
@@ -1003,7 +1003,7 @@ public struct Kraken {
 	///
 	/// - Parameter txid: Open order transaction ID (txid) or user reference (userref)
 	///
-	public func cancelOrder(txid: String) async -> KrakenNetwork.AsyncResult {
+	public func cancelOrder(txid: String) async -> KrakenNetwork.KrakenResult {
 		var options: [String: String] = [:]
 		options["txid"] = txid
 		return await request.postRequest(with: "CancelOrder", params: options)
@@ -1014,14 +1014,14 @@ public struct Kraken {
     /// Cancel all open orders
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/cancelAllOrders)
-    public func cancelAllOrders(completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func cancelAllOrders(completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
 		request.postRequest(with: "CancelAll", completion: completion)
     }
 
 	/// Cancel all open orders
 	///
 	/// [See API Reference](https://docs.kraken.com/rest/#operation/cancelAllOrders)
-	public func cancelAllOrders() async -> KrakenNetwork.AsyncResult {
+	public func cancelAllOrders() async -> KrakenNetwork.KrakenResult {
 		await request.postRequest(with: "CancelAll")
 	}
 
@@ -1038,7 +1038,7 @@ public struct Kraken {
 	/// - Parameters:
 	///   - timeout: Duration (in seconds) to set/extend the timer by
 	///
-    public func cancelAllAfter(timeout: Int, completion: @escaping KrakenNetwork.AsyncOperation) {
+    public func cancelAllAfter(timeout: Int, completion: @escaping (KrakenNetwork.KrakenResult) -> ()) {
         var optionsCopy: [String: String] = [:]
         optionsCopy["timeout"] = "\(timeout)"
         request.postRequest(with: "CancelAllOrdersAfter", params: optionsCopy, completion: completion)
@@ -1055,7 +1055,7 @@ public struct Kraken {
 	/// - Parameters:
 	///   - timeout: Duration (in seconds) to set/extend the timer by
 	///
-	public func cancelAllAfter(timeout: Int) async -> KrakenNetwork.AsyncResult {
+	public func cancelAllAfter(timeout: Int) async -> KrakenNetwork.KrakenResult {
 		var optionsCopy: [String: String] = [:]
 		optionsCopy["timeout"] = "\(timeout)"
 		return await request.postRequest(with: "CancelAllOrdersAfter", params: optionsCopy)

@@ -10,42 +10,29 @@ import Foundation
 
 /// Error Type for Kraken REST API call
 public enum KrakenError: Error {
-    case errorAPI(reason: String)
-    case errorNetworking(reason: String)
+
+	/// API Error
+    case errorAPI(_ reason: String)
+
+	/// Networking Error
+    case errorNetworking(_ reason: String)
+
+	/// Unknown/Other Error
+	case unknown(_ error: Error?)
 }
 
-public enum KrakenResult<Value> {
-    case success(Value)
-    case failure(Error)
-    
-    public func dematerialize() throws -> Value {
-        switch self {
-        case let .success(value):
-            return value
-        case let .failure(error):
-            throw error
-        }
-    }
-    
-    public func map<U>(_ transform: (Value) -> U) -> KrakenResult<U> {
-        return flatMap { .success(transform($0)) }
-    }
-    
-    public func flatMap<U>(_ transform: (Value) -> KrakenResult<U>) -> KrakenResult<U> {
-        return analysis(
-            ifSuccess: transform,
-            ifFailure: KrakenResult<U>.failure)
-    }
-    
-    public func analysis<Result>(ifSuccess: (Value) -> Result, ifFailure: (Error) -> Result) -> Result {
-        switch self {
-        case let .success(value):
-            return ifSuccess(value)
-        case let .failure(value):
-            return ifFailure(value)
-        }
-    }
-    
+extension KrakenError {
+	/// The description of the passed Error instance
+	public var description: String {
+		switch self {
+		case .errorAPI(let reason):
+			return reason
+		case .errorNetworking(let reason):
+			return reason
+		case .unknown(let error):
+			return error?.localizedDescription ?? "No Error Description"
+		}
+	}
 }
 
 extension Sequence where Iterator.Element: Equatable {
@@ -59,6 +46,7 @@ extension Sequence where Iterator.Element: Equatable {
     }
 }
 
+/// Append the conforming Types content to `Data`
 public protocol DataConvertible {
     static func + (lhs: Data, rhs: Self) -> Data
     static func += (lhs: inout Data, rhs: Self)

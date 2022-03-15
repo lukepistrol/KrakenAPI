@@ -9,6 +9,7 @@
 import Foundation
 import CryptoSwift
 
+/// Network wrapper to make API calls via `URLSession`
 public struct KrakenNetwork {
 
 	/// The type of the request [public | private]
@@ -20,11 +21,8 @@ public struct KrakenNetwork {
         case privateRequest = "private"
     }
 
-	/// Result Type: ``KrakenResult``
-    public typealias AsyncOperation = (KrakenResult<[String: Any]>) -> Void
-
-	/// Result Type: KrakenResult<[String: Any]>
-	public typealias AsyncResult = KrakenResult<[String: Any]>
+	/// Result Type: Result<[String: Any], ``KrakenError``>
+	public typealias KrakenResult = Result<[String: Any], KrakenError>
 
 	/// Kraken Credentials for API calls
     private let credentials: Kraken.Credentials
@@ -86,7 +84,7 @@ public struct KrakenNetwork {
 	///   - type: The type of the endpoint [public | private]
 	///   - completion: completion handler callback
 	internal func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest,
-                    completion: @escaping AsyncOperation) {
+                    completion: @escaping (KrakenResult) -> ()) {
         let params = params ?? [:]
         guard let url = createURL(with: method, params:params, type: type) else {
             fatalError()
@@ -103,7 +101,7 @@ public struct KrakenNetwork {
 	///   - params: The parameters for the API endpoint
 	///   - type: The type of the endpoint [public | private]
 	/// - Returns: KrakenResult<[String: Any]>
-	internal func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest) async -> AsyncResult {
+	internal func getRequest(with method: String, params: [String : String]? = [:], type: RequestType = .publicRequest) async -> KrakenResult {
 		return await withCheckedContinuation { continuation in
 			getRequest(with: method, params: params, type: type) { result in
 				continuation.resume(returning: result)
@@ -119,7 +117,7 @@ public struct KrakenNetwork {
 	///   - type: The type of the endpoint [public | private]
 	///   - completion: completion handler callback
 	internal func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest,
-                     completion: @escaping AsyncOperation) {
+                     completion: @escaping (KrakenResult) -> ()) {
         
         let params = addNonce(to:params)
         let urlParams = encode(params: params)
@@ -146,7 +144,7 @@ public struct KrakenNetwork {
 	///   - params: The parameters for the API endpoint
 	///   - type: The type of the endpoint [public | private]
 	/// - Returns: KrakenResult<[String: Any]>
-	internal func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest) async -> AsyncResult {
+	internal func postRequest(with path: String, params: [String : String]? = nil, type: RequestType = .privateRequest) async -> KrakenResult {
 		return await withCheckedContinuation { continuation in
 			postRequest(with: path, params: params, type: type) { result in
 				continuation.resume(returning: result)
@@ -159,28 +157,28 @@ public struct KrakenNetwork {
 	/// - Parameters:
 	///   - request: The URLRequest
 	///   - completion: completion handler callback
-	private func rawRequest(_ request: URLRequest, completion: @escaping AsyncOperation) {
+	private func rawRequest(_ request: URLRequest, completion: @escaping (KrakenResult) -> ()) {
         let session = URLSession.shared
         let task = session.dataTask(with: request) { (data, response, error) in
             guard let data = data, let _ = response else {
-                return completion(.failure(error!))
+				return completion(.failure(.unknown(error)))
             }
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options:.allowFragments) as? [String : AnyObject] else {
-                    return completion(.failure(KrakenError.errorNetworking(reason: "Wrong JSON structure")))
+                    return completion(.failure(KrakenError.errorNetworking("Wrong JSON structure")))
                 }
                 if let errorArray = json["error"] as? [String] {
                     if !errorArray.isEmpty {
-                        return completion(.failure(KrakenError.errorAPI(reason: errorArray.first!)))
+                        return completion(.failure(KrakenError.errorAPI(errorArray.first!)))
                     }
                 }
                 guard let result = json["result"] as? [String: Any] else {
-					return completion(.failure(KrakenError.errorAPI(reason: "No Result found")))
+					return completion(.failure(KrakenError.errorAPI("No Result found")))
 				}
                 return completion(.success(result))
                 
             } catch let error as NSError {
-                return completion(.failure(KrakenError.errorNetworking(reason: "Error JSON parsing: \(error.localizedDescription)")))
+                return completion(.failure(KrakenError.errorNetworking("Error JSON parsing: \(error.localizedDescription)")))
             }
             
             }
@@ -191,7 +189,7 @@ public struct KrakenNetwork {
 	/// - Parameters:
 	///   - request: The URLRequest
 	/// - Returns: KrakenResult<[String: Any]>
-	private func rawRequest(_ request: URLRequest) async -> AsyncResult {
+	private func rawRequest(_ request: URLRequest) async -> KrakenResult {
 		return await withCheckedContinuation { continuation in
 			rawRequest(request) { result in
 				continuation.resume(returning: result)
@@ -212,7 +210,7 @@ public struct KrakenNetwork {
             let nonce = params["nonce"],
             let digest = (nonce + encodedParams).data(using: .utf8),
             let encodedPath = path.data(using: .utf8) else {
-                throw KrakenError.errorAPI(reason: "Error encoding signature")
+                throw KrakenError.errorAPI("Error encoding signature")
         }
         
         let message = digest.sha256()
