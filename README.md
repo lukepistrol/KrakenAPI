@@ -25,6 +25,10 @@ The current version  can be used to query public/private data and make trades. P
 
 Kraken Swift was built by [Antonio Casero](@acaserop) 
 
+## Package Documentation
+
+This package is fully documented. The documentation can be found [here](https://lukepistrol.github.io/KrakenAPI/documentation/krakenapi)
+
 ## Installation
 
 ### Swift Package Manager
@@ -81,4 +85,4 @@ switch result {
 }
 ```
 
-See more documentation [here](https://docs.kraken.com/rest/) and in code documentation.
+See official API documentation [here](https://docs.kraken.com/rest/) 
